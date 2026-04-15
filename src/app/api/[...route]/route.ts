@@ -17,6 +17,12 @@ const user_detail = require('NeteaseCloudMusicApi/module/user_detail');
 const request = require('NeteaseCloudMusicApi/util/request');
 const { cookieToJson } = require('NeteaseCloudMusicApi/util/index');
 
+// 修复 Vercel Serverless 环境下写 /tmp/anonymous_token 的 ENOENT 报错
+if (typeof process !== 'undefined') {
+  // 覆盖全局的环境变量，告诉 NeteaseCloudMusicApi 不要去写本地文件缓存 token
+  process.env.NO_ANONYMOUS_TOKEN = 'true';
+}
+
 const wrapRequest = (fn: any) => {
   return async (data: any) => {
     const cookie = typeof data.cookie === 'string' ? cookieToJson(data.cookie) : data.cookie || {};
