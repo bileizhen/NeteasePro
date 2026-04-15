@@ -1,0 +1,24 @@
+diff --git a/node_modules/NeteaseCloudMusicApi/util/request.js b/node_modules/NeteaseCloudMusicApi/util/request.js
+index 711afe8..ecde693 100644
+--- a/node_modules/NeteaseCloudMusicApi/util/request.js
++++ b/node_modules/NeteaseCloudMusicApi/util/request.js
+@@ -19,10 +19,15 @@ const { URLSearchParams, URL } = require('url')
+ const { APP_CONF } = require('../util/config.json')
+ 
+ // 预先读取匿名token并缓存
+-const anonymous_token = fs.readFileSync(
+-  path.resolve(tmpPath, './anonymous_token'),
+-  'utf-8',
+-)
++let anonymous_token = '';
++try {
++  anonymous_token = fs.readFileSync(
++    path.resolve(tmpPath, './anonymous_token'),
++    'utf-8',
++  )
++} catch (err) {
++  // console.warn('Failed to read anonymous_token from /tmp, this is expected in serverless environments like Vercel.');
++}
+ 
+ // 预先绑定常用函数和常量
+ const floor = Math.floor
