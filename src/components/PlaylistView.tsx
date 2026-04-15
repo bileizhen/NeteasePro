@@ -151,22 +151,19 @@ export default function PlaylistView() {
     }
     setOpenMenuId(null);
   };
-  const toggleAll = () => {
-    if (selectedIds.size === songs.length && songs.length > 0) {
-      setSelectedIds(new Set());
-    } else {
+  const toggleAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
       setSelectedIds(new Set(songs.map(s => s.id)));
+    } else {
+      setSelectedIds(new Set());
     }
   };
 
-  const toggleSelection = (e: React.MouseEvent, id: number) => {
+  const toggleSelection = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
     e.stopPropagation();
     const newSet = new Set(selectedIds);
-    if (newSet.has(id)) {
-      newSet.delete(id);
-    } else {
-      newSet.add(id);
-    }
+    if (e.target.checked) newSet.add(id);
+    else newSet.delete(id);
     setSelectedIds(newSet);
   };
 
@@ -339,7 +336,7 @@ export default function PlaylistView() {
               isSelectMode ? "grid-cols-[32px_auto_minmax(0,1fr)_minmax(0,1fr)_auto]" : "grid-cols-[auto_minmax(0,1fr)_minmax(0,1fr)_auto]"
             )}>
               {isSelectMode && (
-                <div className="flex justify-center">
+                <div className="flex justify-center" onClick={(e) => e.stopPropagation()}>
                   <input 
                     type="checkbox" 
                     checked={songs.length > 0 && selectedIds.size === songs.length}
