@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import confetti from 'canvas-confetti';
 
 export default function PlaylistView() {
-  const { profile, cookie, setCurrentSong, setPlaylist, addToPlaylist, addMultipleToPlaylist, currentSong, isPlaying, setIsPlaying, setIsInitialLoading } = useAppStore();
+  const { profile, cookie, setCurrentSong, setPlaylist, addToPlaylist, addMultipleToPlaylist, currentSong, isPlaying, setIsPlaying, setIsInitialLoading, isInitialLoading } = useAppStore();
   const [songs, setSongs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [openDownloadId, setOpenDownloadId] = useState<number | null>(null);
