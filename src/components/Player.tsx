@@ -192,8 +192,9 @@ export default function Player() {
         let intensity = value / 255;
         if (!isFinite(intensity) || isNaN(intensity)) intensity = 0;
 
-        let radius = 100 + (intensity * 250); // Increased base size to prevent point light source look
-        if (!isFinite(radius) || radius <= 0) radius = 100; 
+        const baseRadius = Math.max(50, Math.min(canvas.width, canvas.height) * 0.15); // Responsive base radius
+        let radius = baseRadius + (intensity * baseRadius * 2.5); 
+        if (!isFinite(radius) || radius <= 0) radius = baseRadius; 
         
         const opacity = 0.03 + (intensity * 0.15); // Lower opacity to compensate for more overlapping points and larger radius
 
@@ -664,13 +665,13 @@ export default function Player() {
       <AnimatePresence>
         <motion.div 
           key="player-bar"
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
+          initial={{ y: 100, x: "-50%", opacity: 0 }}
+          animate={{ y: 0, x: "-50%", opacity: 1 }}
+          exit={{ y: 100, x: "-50%", opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] md:w-fit z-50 max-w-5xl"
+          className="fixed bottom-4 md:bottom-8 left-1/2 w-[calc(100%-2rem)] md:w-fit z-50 max-w-5xl"
         >
-          <div className="bg-[#1c1c1e] dark:bg-[#1c1c1e] rounded-[24px] md:rounded-[32px] p-2 pr-4 md:pr-6 flex items-center justify-between md:justify-start shadow-2xl border border-white/10 relative overflow-hidden transition-all">
+          <div className="bg-[#1c1c1e] dark:bg-[#1c1c1e] rounded-[24px] md:rounded-[32px] p-2 pr-4 md:pr-6 flex items-center justify-between md:justify-start shadow-2xl border border-white/10 relative overflow-hidden transition-all w-full">
           <audio 
             ref={audioRef} 
             src={url || undefined} 
