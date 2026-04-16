@@ -43,7 +43,7 @@ export default function UserSidebar() {
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         className={clsx(
-          "fixed left-0 top-0 bottom-24 w-64 p-6 flex flex-col border-r border-black/5 dark:border-white/10 z-50 overflow-y-auto custom-scrollbar bg-[#f5f5f7] dark:bg-[#121212] transition-transform duration-300 xl:translate-x-0 xl:bg-transparent",
+          "fixed left-0 top-0 bottom-24 w-64 p-6 flex flex-col border-r border-black/5 dark:border-white/10 z-50 overflow-y-auto custom-scrollbar bg-[#f5f5f7] dark:bg-[#121212] transition-transform duration-300 xl:translate-x-0 xl:bg-transparent xl:dark:bg-transparent",
           isMobileUserOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
         )}
       >

@@ -70,7 +70,7 @@ export default function PlaylistSidebar() {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         className={clsx(
-          "fixed right-0 top-0 bottom-24 w-72 p-6 flex flex-col border-l border-black/5 dark:border-white/10 z-50 bg-[#f5f5f7] dark:bg-[#121212] transition-transform duration-300 xl:translate-x-0 xl:bg-transparent",
+          "fixed right-0 top-0 bottom-24 w-72 p-6 flex flex-col border-l border-black/5 dark:border-white/10 z-50 bg-[#f5f5f7] dark:bg-[#121212] transition-transform duration-300 xl:translate-x-0 xl:bg-transparent xl:dark:bg-transparent",
           isMobilePlaylistOpen ? "translate-x-0 shadow-2xl" : "translate-x-full"
         )}
       >
