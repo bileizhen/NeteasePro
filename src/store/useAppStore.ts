@@ -24,6 +24,7 @@ interface AppState {
   searchQuery: string;
   playMode: 'sequence' | 'loop' | 'shuffle';
   originalPlaylist: Song[];
+  isInitialLoading: boolean;
   setCookie: (cookie: string) => void;
   setProfile: (profile: UserProfile) => void;
   setCurrentSong: (song: Song) => void;
@@ -33,6 +34,7 @@ interface AppState {
   setIsPlaying: (isPlaying: boolean) => void;
   setSearchQuery: (query: string) => void;
   setPlayMode: (mode: 'sequence' | 'loop' | 'shuffle') => void;
+  setIsInitialLoading: (isLoading: boolean) => void;
   logout: () => void;
 }
 
@@ -47,6 +49,7 @@ export const useAppStore = create<AppState>()(
       isPlaying: false,
       searchQuery: '',
       playMode: 'sequence',
+      isInitialLoading: false,
       setCookie: (cookie) => set({ cookie }),
       setProfile: (profile) => set({ profile }),
       setCurrentSong: (song) => set({ currentSong: song }),
@@ -117,7 +120,8 @@ export const useAppStore = create<AppState>()(
         }
         return { playMode: mode };
       }),
-      logout: () => set({ cookie: null, profile: null, currentSong: null, playlist: [], originalPlaylist: [], isPlaying: false, searchQuery: '', playMode: 'sequence' }),
+      setIsInitialLoading: (isLoading) => set({ isInitialLoading: isLoading }),
+      logout: () => set({ cookie: null, profile: null, currentSong: null, playlist: [], originalPlaylist: [], isPlaying: false, searchQuery: '', playMode: 'sequence', isInitialLoading: false }),
     }),
     {
       name: 'netease-pro-storage',

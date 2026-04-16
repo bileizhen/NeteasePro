@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import confetti from 'canvas-confetti';
 
 export default function PlaylistView() {
-  const { profile, cookie, setCurrentSong, setPlaylist, addToPlaylist, addMultipleToPlaylist, currentSong, isPlaying, setIsPlaying } = useAppStore();
+  const { profile, cookie, setCurrentSong, setPlaylist, addToPlaylist, addMultipleToPlaylist, currentSong, isPlaying, setIsPlaying, setIsInitialLoading } = useAppStore();
   const [songs, setSongs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [openDownloadId, setOpenDownloadId] = useState<number | null>(null);
@@ -70,6 +70,7 @@ export default function PlaylistView() {
 
   const fetchPlaylist = async () => {
     setLoading(true);
+    setIsInitialLoading(true);
     try {
       // 1. 获取用户歌单列表
       const listRes = await fetch('/api/user/playlist', {
@@ -117,6 +118,7 @@ export default function PlaylistView() {
       console.error('Failed to fetch playlist', error);
     } finally {
       setLoading(false);
+      setIsInitialLoading(false);
     }
   };
 
