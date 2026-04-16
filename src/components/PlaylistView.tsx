@@ -50,13 +50,10 @@ export default function PlaylistView() {
         });
       }, 250);
 
-      // Auto hide welcome screen after 2.5 seconds
-      const timer = setTimeout(() => {
-        setShowWelcome(false);
-      }, 2500);
+      // We no longer auto hide after 2.5s, we wait for isInitialLoading to finish
+      // The welcome screen will be hidden when both showWelcome is false (handled below) AND isInitialLoading is false
       
       return () => {
-        clearTimeout(timer);
         clearInterval(interval);
       };
     }
@@ -64,7 +61,9 @@ export default function PlaylistView() {
 
   useEffect(() => {
     if (profile && cookie) {
-      fetchPlaylist();
+      fetchPlaylist().then(() => {
+        setShowWelcome(false); // Hide welcome screen after fetch completes
+      });
     }
   }, [profile, cookie]);
 
@@ -262,7 +261,7 @@ export default function PlaylistView() {
   return (
     <div className="w-full max-w-5xl mx-auto my-8 px-6 min-h-[70vh] flex flex-col">
       <AnimatePresence>
-        {showWelcome && profile && (
+        {(showWelcome || isInitialLoading) && profile && (
           <motion.div
             key="welcome-screen"
             initial={{ opacity: 0 }}
@@ -290,6 +289,20 @@ export default function PlaylistView() {
                   {profile.nickname}
                 </p>
               </div>
+              
+              <AnimatePresence>
+                {isInitialLoading && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="flex flex-col items-center mt-8 space-y-3"
+                  >
+                    <Loader2 className="w-8 h-8 text-[#0071e3] animate-spin" />
+                    <p className="text-sm text-[#86868b] font-medium tracking-wide">正在加载您的音乐世界...</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           </motion.div>
         )}

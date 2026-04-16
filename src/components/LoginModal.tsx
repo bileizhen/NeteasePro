@@ -78,7 +78,7 @@ export default function LoginModal() {
     }
   };
 
-  if (cookie && !isInitialLoading) return null;
+  if (cookie) return null;
 
   return (
     <AnimatePresence>
@@ -94,19 +94,14 @@ export default function LoginModal() {
           </h2>
           
           <div className="bg-white p-4 rounded-2xl shadow-sm border border-black/5 mb-8 relative group w-48 h-48 flex items-center justify-center overflow-hidden">
-            {cookie && isInitialLoading ? (
-              <div className="flex flex-col items-center justify-center space-y-4 w-full h-full">
-                <div className="w-12 h-12 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
-                <div className="text-sm font-medium text-gray-500 mt-4">正在加载您的音乐世界...</div>
-              </div>
-            ) : qrCodeUrl ? (
+            {qrCodeUrl ? (
               <img src={qrCodeUrl} alt="QR Code" className="w-full h-full object-contain" />
             ) : (
               <div className="text-gray-400 text-sm">
                 加载中...
               </div>
             )}
-            {status === 800 && !cookie && (
+            {status === 800 && (
               <div className="absolute inset-0 bg-white/80 flex items-center justify-center backdrop-blur-sm rounded-2xl">
                 <button 
                   onClick={initQrCode}
@@ -119,7 +114,7 @@ export default function LoginModal() {
           </div>
 
           <p className="text-sm text-[#86868b] font-medium tracking-wide">
-            {cookie && isInitialLoading ? '这可能需要几秒钟时间' : statusText}
+            {statusText}
           </p>
         </div>
       </motion.div>
