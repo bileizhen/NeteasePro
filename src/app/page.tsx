@@ -9,7 +9,7 @@ export default function Home() {
     <main className="min-h-screen relative pb-32">
       <LoginModal />
       <UserSidebar />
-      <div className="xl:pl-64 xl:pr-72 w-full transition-all duration-300">
+      <div className="xl:pl-64 xl:pr-72 w-full transition-all duration-300 min-h-screen">
         <MainContent />
       </div>
       <PlaylistSidebar />

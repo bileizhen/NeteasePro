@@ -561,7 +561,7 @@ export default function Player() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 100 }}
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-          className="fixed inset-0 z-30 bg-[#f5f5f7]/95 dark:bg-black/95 backdrop-blur-3xl flex flex-col pt-20 pb-40 px-6"
+          className="fixed inset-0 z-30 bg-[#f5f5f7]/95 dark:bg-black/95 backdrop-blur-3xl flex flex-col pt-16 md:pt-20 pb-32 md:pb-40 px-4 md:px-6"
         >
           <div 
             className="flex-1 max-w-3xl mx-auto w-full overflow-y-auto no-scrollbar scroll-smooth relative" 
@@ -668,9 +668,9 @@ export default function Player() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 w-fit z-50 px-4"
+          className="fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] md:w-fit z-50 max-w-5xl"
         >
-          <div className="bg-[#1c1c1e] dark:bg-[#1c1c1e] rounded-[32px] p-2 pr-6 flex items-center shadow-2xl border border-white/10 relative overflow-hidden transition-all">
+          <div className="bg-[#1c1c1e] dark:bg-[#1c1c1e] rounded-[24px] md:rounded-[32px] p-2 pr-4 md:pr-6 flex items-center justify-between md:justify-start shadow-2xl border border-white/10 relative overflow-hidden transition-all">
           <audio 
             ref={audioRef} 
             src={url || undefined} 
@@ -685,14 +685,14 @@ export default function Player() {
             autoPlay={isPlaying}
           />
 
-          <div className="flex items-center gap-3 w-[240px] flex-shrink-0 relative group pl-2">
+          <div className="flex items-center gap-2 md:gap-3 w-auto md:w-[240px] flex-shrink-0 relative group pl-1 md:pl-2">
             <div className={clsx(
-              "w-12 h-12 rounded-full overflow-hidden shadow-md shrink-0 relative bg-black border-[2px] border-[#2c2c2e] p-1 flex items-center justify-center transition-all duration-500",
+              "w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden shadow-md shrink-0 relative bg-black border-[2px] border-[#2c2c2e] p-1 flex items-center justify-center transition-all duration-500",
               isPlaying ? "animate-[spin_10s_linear_infinite]" : ""
             )}>
               <img src={currentSong.al.picUrl + '?param=100y100'} alt="Cover" className="w-full h-full object-cover rounded-full" />
             </div>
-            <div className="flex flex-col overflow-hidden justify-center h-full cursor-pointer group-hover:opacity-80 transition-opacity" onClick={() => {
+            <div className="flex flex-col overflow-hidden justify-center h-full cursor-pointer group-hover:opacity-80 transition-opacity max-w-[100px] md:max-w-none" onClick={() => {
                 const el = document.getElementById(`song-${currentSong.id}`);
                 if (el) {
                   el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -710,12 +710,12 @@ export default function Player() {
               </div>
           </div>
 
-          <div className="flex flex-col items-center gap-1.5 px-6 border-l border-white/5 border-r min-w-[360px]">
-            <div className="flex items-center gap-6">
+          <div className="flex flex-col items-center gap-1.5 px-2 md:px-6 border-l border-white/5 md:border-r flex-1 md:min-w-[360px]">
+            <div className="flex items-center gap-4 md:gap-6">
               <button 
                 onClick={togglePlayMode} 
                 className={clsx(
-                  "transition-colors",
+                  "transition-colors hidden md:block",
                   playMode !== 'sequence' ? "text-white" : "text-[#86868b] hover:text-white"
                 )}
                 title={playMode === 'sequence' ? "列表循环" : playMode === 'loop' ? "单曲循环" : "随机播放"}
@@ -726,18 +726,18 @@ export default function Player() {
               </button>
               
               <button onClick={handlePrev} className="text-[#86868b] hover:text-white transition-colors">
-                <SkipBack className="w-5 h-5 fill-current" />
+                <SkipBack className="w-4 h-4 md:w-5 md:h-5 fill-current" />
               </button>
               
               <button 
                 onClick={() => setIsPlaying(!isPlaying)} 
-                className="w-10 h-10 flex items-center justify-center bg-white text-[#1c1c1e] rounded-full hover:scale-105 transition-transform shadow-sm"
+                className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-white text-[#1c1c1e] rounded-full hover:scale-105 transition-transform shadow-sm"
               >
-                {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current translate-x-[1px]" />}
+                {isPlaying ? <Pause className="w-3 h-3 md:w-4 md:h-4 fill-current" /> : <Play className="w-3 h-3 md:w-4 md:h-4 fill-current translate-x-[1px]" />}
               </button>
               
               <button onClick={handleNext} className="text-[#86868b] hover:text-white transition-colors">
-                <SkipForward className="w-5 h-5 fill-current" />
+                <SkipForward className="w-4 h-4 md:w-5 md:h-5 fill-current" />
               </button>
 
               <button 
@@ -770,7 +770,7 @@ export default function Player() {
                     exit={{ opacity: 0, scale: 0.8, width: 0, marginLeft: 0 }}
                     onClick={() => setShowTranslation(!showTranslation)}
                     className={clsx(
-                      "px-1.5 py-0.5 rounded text-[10px] font-bold transition-colors whitespace-nowrap border",
+                      "hidden md:block px-1.5 py-0.5 rounded text-[10px] font-bold transition-colors whitespace-nowrap border",
                       showTranslation 
                         ? "bg-white text-[#1c1c1e] border-transparent" 
                         : "bg-transparent text-[#86868b] hover:text-white border-white/20 hover:border-white/50"
@@ -783,9 +783,9 @@ export default function Player() {
               </AnimatePresence>
             </div>
             
-            <div className="w-full flex items-center gap-3 text-[10px] font-medium text-[#86868b]">
-              <span className="w-8 text-right">{formatTime(progress)}</span>
-              <div className="flex-1 relative h-1 group cursor-pointer">
+            <div className="w-full flex items-center gap-2 md:gap-3 text-[10px] font-medium text-[#86868b]">
+              <span className="w-6 md:w-8 text-right hidden md:block">{formatTime(progress)}</span>
+              <div className="flex-1 relative h-1 group cursor-pointer hidden md:block">
                 <input 
                   type="range" 
                   min="0" 
@@ -801,11 +801,11 @@ export default function Player() {
                   />
                 </div>
               </div>
-              <span className="w-8 text-left">{formatTime(duration)}</span>
+              <span className="w-6 md:w-8 text-left hidden md:block">{formatTime(duration)}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 w-[120px] justify-end pl-6">
+          <div className="hidden md:flex items-center gap-3 w-[120px] justify-end pl-6">
             <div className="flex items-center gap-2 group w-full">
               <Volume2 className="w-4 h-4 text-[#86868b]" />
               <div className="w-full relative h-1 cursor-pointer hidden md:block">

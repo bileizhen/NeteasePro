@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
 export default function PlaylistSidebar() {
-  const { playlist, currentSong, isPlaying, setIsPlaying, setCurrentSong, playMode } = useAppStore();
+  const { playlist, currentSong, isPlaying, setIsPlaying, setCurrentSong, playMode, isMobilePlaylistOpen, setIsMobilePlaylistOpen } = useAppStore();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [displaySongs, setDisplaySongs] = useState<any[]>([]);
 
@@ -57,11 +57,23 @@ export default function PlaylistSidebar() {
   if (!playlist.length) return null;
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="fixed right-0 top-0 bottom-24 w-72 p-6 flex flex-col border-l border-black/5 dark:border-white/10 hidden xl:flex z-10"
-    >
+    <>
+      {/* Mobile Overlay */}
+      {isMobilePlaylistOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 xl:hidden backdrop-blur-sm"
+          onClick={() => setIsMobilePlaylistOpen(false)}
+        />
+      )}
+
+      <motion.div 
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className={clsx(
+          "fixed right-0 top-0 bottom-24 w-72 p-6 flex flex-col border-l border-black/5 dark:border-white/10 z-50 bg-[#f5f5f7] dark:bg-[#121212] transition-transform duration-300 xl:translate-x-0 xl:bg-transparent",
+          isMobilePlaylistOpen ? "translate-x-0 shadow-2xl" : "translate-x-full"
+        )}
+      >
       <div className="flex items-center gap-2 mb-6 text-[#1d1d1f] dark:text-[#f5f5f7]">
         <ListMusic className="w-5 h-5" />
         <h2 className="text-lg font-semibold">当前播放列表</h2>
@@ -139,5 +151,6 @@ export default function PlaylistSidebar() {
         })}
       </div>
     </motion.div>
+    </>
   );
 }

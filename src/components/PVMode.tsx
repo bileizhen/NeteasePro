@@ -233,7 +233,7 @@ export default function PVMode({ lyrics, progress, currentSong, onClose, dominan
     const alignX = (layoutMode === 'directional' || layoutMode === 'center-burst') ? 'center' : ['flex-start', 'center', 'flex-end'][Math.floor(rand() * 3)];
     const alignY = (layoutMode === 'directional' || layoutMode === 'center-burst') ? 'center' : ['flex-start', 'center', 'flex-end'][Math.floor(rand() * 3)];
     
-    const size = rand() > 0.8 ? 'text-7xl md:text-9xl' : rand() > 0.5 ? 'text-6xl md:text-8xl' : 'text-5xl md:text-7xl';
+    const size = rand() > 0.8 ? 'text-5xl md:text-7xl xl:text-9xl' : rand() > 0.5 ? 'text-4xl md:text-6xl xl:text-8xl' : 'text-3xl md:text-5xl xl:text-7xl';
     
     // Split by spaces to keep English words intact, or fallback to characters if no spaces
     const words = lineText.split(/\s+/).filter(Boolean);
@@ -471,12 +471,12 @@ export default function PVMode({ lyrics, progress, currentSong, onClose, dominan
       </div>
 
       {/* Main Typography Area */}
-      <div className="flex-1 flex relative p-12 overflow-hidden">
+      <div className="flex-1 flex relative p-4 md:p-12 overflow-hidden">
         <AnimatePresence mode="wait">
           {currentLine && lineStyle ? (
             <motion.div
               key={currentIndex}
-              className="absolute inset-12 flex"
+              className="absolute inset-4 md:inset-12 flex"
               style={{
                 justifyContent: lineStyle.alignX,
                 alignItems: lineStyle.alignY,
@@ -658,7 +658,7 @@ export default function PVMode({ lyrics, progress, currentSong, onClose, dominan
       </div>
 
       {/* Bottom Progress Bar & Controls */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 z-10 hover:h-12 transition-all duration-300 group flex items-center px-6">
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 z-10 hover:h-12 transition-all duration-300 group flex items-center px-4 md:px-6">
         <div 
           className="absolute bottom-0 left-0 h-1 group-hover:h-full bg-white/40 group-hover:bg-white/10 transition-all origin-left"
           style={{ width: `${(progress / currentSong.dt) * 100 * 1000}%` }}

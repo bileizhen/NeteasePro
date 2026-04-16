@@ -25,6 +25,8 @@ interface AppState {
   playMode: 'sequence' | 'loop' | 'shuffle';
   originalPlaylist: Song[];
   isInitialLoading: boolean;
+  isMobileUserOpen: boolean;
+  isMobilePlaylistOpen: boolean;
   setCookie: (cookie: string) => void;
   setProfile: (profile: UserProfile) => void;
   setCurrentSong: (song: Song) => void;
@@ -35,6 +37,8 @@ interface AppState {
   setSearchQuery: (query: string) => void;
   setPlayMode: (mode: 'sequence' | 'loop' | 'shuffle') => void;
   setIsInitialLoading: (isLoading: boolean) => void;
+  setIsMobileUserOpen: (open: boolean) => void;
+  setIsMobilePlaylistOpen: (open: boolean) => void;
   logout: () => void;
 }
 
@@ -50,6 +54,8 @@ export const useAppStore = create<AppState>()(
       searchQuery: '',
       playMode: 'sequence',
       isInitialLoading: false,
+      isMobileUserOpen: false,
+      isMobilePlaylistOpen: false,
       setCookie: (cookie) => set({ cookie }),
       setProfile: (profile) => set({ profile }),
       setCurrentSong: (song) => set({ currentSong: song }),
@@ -121,7 +127,9 @@ export const useAppStore = create<AppState>()(
         return { playMode: mode };
       }),
       setIsInitialLoading: (isLoading) => set({ isInitialLoading: isLoading }),
-      logout: () => set({ cookie: null, profile: null, currentSong: null, playlist: [], originalPlaylist: [], isPlaying: false, searchQuery: '', playMode: 'sequence', isInitialLoading: false }),
+      setIsMobileUserOpen: (open) => set({ isMobileUserOpen: open }),
+      setIsMobilePlaylistOpen: (open) => set({ isMobilePlaylistOpen: open }),
+      logout: () => set({ cookie: null, profile: null, currentSong: null, playlist: [], originalPlaylist: [], isPlaying: false, searchQuery: '', playMode: 'sequence', isInitialLoading: false, isMobileUserOpen: false, isMobilePlaylistOpen: false }),
     }),
     {
       name: 'netease-pro-storage',

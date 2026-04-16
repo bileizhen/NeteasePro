@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import clsx from 'clsx';
 
 export default function UserSidebar() {
-  const { profile, cookie, logout } = useAppStore();
+  const { profile, cookie, logout, isMobileUserOpen, setIsMobileUserOpen } = useAppStore();
   const [userDetail, setUserDetail] = useState<any>(null);
 
   useEffect(() => {
@@ -30,11 +30,23 @@ export default function UserSidebar() {
   if (!profile) return null;
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="fixed left-0 top-0 bottom-24 w-64 p-6 flex flex-col border-r border-black/5 dark:border-white/10 hidden xl:flex z-10 overflow-y-auto custom-scrollbar"
-    >
+    <>
+      {/* Mobile Overlay */}
+      {isMobileUserOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 xl:hidden backdrop-blur-sm"
+          onClick={() => setIsMobileUserOpen(false)}
+        />
+      )}
+      
+      <motion.div 
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className={clsx(
+          "fixed left-0 top-0 bottom-24 w-64 p-6 flex flex-col border-r border-black/5 dark:border-white/10 z-50 overflow-y-auto custom-scrollbar bg-[#f5f5f7] dark:bg-[#121212] transition-transform duration-300 xl:translate-x-0 xl:bg-transparent",
+          isMobileUserOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
+        )}
+      >
       <div className="flex flex-col items-center gap-4 text-center mt-4">
         <div className="relative">
           <img 
@@ -117,5 +129,6 @@ export default function UserSidebar() {
         退出登录
       </button>
     </motion.div>
+    </>
   );
 }

@@ -183,21 +183,21 @@ export default function SearchView() {
 
   return (
     <div className="w-full max-w-5xl mx-auto my-8 px-6 min-h-[70vh] flex flex-col">
-      <div className="flex items-center gap-4 mb-10 pb-6">
-        <div className="w-12 h-12 rounded-xl bg-[#0071e3] flex items-center justify-center text-white shadow-md">
-          <Search className="w-6 h-6" />
+      <div className="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-4 mb-8 md:mb-10 pb-6">
+        <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-[#0071e3] flex items-center justify-center text-white shadow-md">
+          <Search className="w-6 h-6 md:w-8 md:h-8" />
         </div>
-        <div className="flex flex-col">
-          <span className="text-xs font-semibold tracking-widest text-[#86868b] uppercase">Search Results</span>
-          <h1 className="text-3xl font-bold tracking-tight text-[#1d1d1f] dark:text-[#f5f5f7]">
+        <div className="flex flex-col items-center md:items-start text-center md:text-left mt-2 md:mt-0">
+          <span className="text-[10px] md:text-xs font-semibold tracking-widest text-[#86868b] uppercase">Search Results</span>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-[#1d1d1f] dark:text-[#f5f5f7]">
             &quot;{searchQuery}&quot;
           </h1>
-          <div className="mt-4 flex items-center gap-4">
+          <div className="mt-3 md:mt-4 flex items-center gap-4">
             <button 
               onClick={handlePlayAll}
-              className="flex items-center gap-2 bg-[#0071e3] hover:bg-[#0077ed] text-white px-6 py-2.5 rounded-full font-semibold transition-colors"
+              className="flex items-center gap-2 bg-[#0071e3] hover:bg-[#0077ed] text-white px-6 py-2 md:py-2.5 rounded-full text-sm md:text-base font-semibold transition-colors"
             >
-              <Play className="w-4 h-4 fill-current" />
+              <Play className="w-3.5 h-3.5 md:w-4 md:h-4 fill-current" />
               播放
             </button>
           </div>
@@ -217,8 +217,8 @@ export default function SearchView() {
         ) : (
           <div className="flex flex-col gap-1 pb-24">
             <div className={clsx(
-              "grid gap-4 px-4 py-2 text-xs font-medium text-[#86868b] uppercase tracking-wider border-b border-black/5 dark:border-white/10 mb-4 items-center",
-              isSelectMode ? "grid-cols-[32px_auto_minmax(0,1fr)_minmax(0,1fr)_auto]" : "grid-cols-[auto_minmax(0,1fr)_minmax(0,1fr)_auto]"
+              "grid gap-2 md:gap-4 px-2 md:px-4 py-2 text-[10px] md:text-xs font-medium text-[#86868b] uppercase tracking-wider border-b border-black/5 dark:border-white/10 mb-2 md:mb-4 items-center",
+              isSelectMode ? "grid-cols-[32px_auto_minmax(0,1fr)_auto] md:grid-cols-[32px_auto_minmax(0,1fr)_minmax(0,1fr)_auto]" : "grid-cols-[auto_minmax(0,1fr)_auto] md:grid-cols-[auto_minmax(0,1fr)_minmax(0,1fr)_auto]"
             )}>
               {isSelectMode && (
                 <div className="flex justify-center" onClick={(e) => e.stopPropagation()}>
@@ -230,10 +230,10 @@ export default function SearchView() {
                   />
                 </div>
               )}
-              <span className="w-8 text-center">#</span>
-              <span>Title</span>
-              <span>Album</span>
-              <span className="w-28 text-right">Time</span>
+              <span className="w-6 md:w-8 text-center hidden md:block">#</span>
+              <span className={clsx(isSelectMode ? "ml-0" : "ml-2 md:ml-0")}>Title</span>
+              <span className="hidden md:block">Album</span>
+              <span className="w-16 md:w-28 text-right">Time</span>
             </div>
             
             {songs.map((song, index) => {
@@ -243,12 +243,12 @@ export default function SearchView() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.01 }}
+                  transition={{ delay: Math.min(index * 0.01, 0.5) }}
                   key={song.id}
                   id={`song-${song.id}`}
                   className={clsx(
-                    "grid gap-4 px-4 py-3 rounded-xl items-center cursor-pointer transition-all group hover:bg-black/5 dark:hover:bg-white/5",
-                    isSelectMode ? "grid-cols-[32px_auto_minmax(0,1fr)_minmax(0,1fr)_auto]" : "grid-cols-[auto_minmax(0,1fr)_minmax(0,1fr)_auto]",
+                    "grid gap-2 md:gap-4 px-2 md:px-4 py-2 md:py-3 rounded-xl items-center cursor-pointer transition-all group hover:bg-black/5 dark:hover:bg-white/5",
+                    isSelectMode ? "grid-cols-[32px_auto_minmax(0,1fr)_auto] md:grid-cols-[32px_auto_minmax(0,1fr)_minmax(0,1fr)_auto]" : "grid-cols-[auto_minmax(0,1fr)_auto] md:grid-cols-[auto_minmax(0,1fr)_minmax(0,1fr)_auto]",
                     isCurrent && "bg-black/5 dark:bg-white/10",
                     isSelectMode && selectedIds.has(song.id) && "bg-black/5 dark:bg-white/10"
                   )}
@@ -273,7 +273,7 @@ export default function SearchView() {
                       />
                     </div>
                   )}
-                  <div className="w-8 text-center flex justify-center relative">
+                  <div className="w-6 md:w-8 text-center hidden md:flex justify-center relative">
                     {isCurrent && isPlaying ? (
                       <div className="flex items-end gap-0.5 h-4 w-4">
                         <motion.div className="w-1 bg-[#1d1d1f] dark:bg-white rounded-full" animate={{ height: ["4px", "12px", "4px"] }} transition={{ repeat: Infinity, duration: 0.8 }} />
@@ -286,24 +286,36 @@ export default function SearchView() {
                     <Play className={clsx("w-4 h-4 text-[#1d1d1f] dark:text-white hidden group-hover:block", isCurrent && isPlaying && "hidden")} />
                   </div>
                   
-                  <div className="flex items-center gap-4 overflow-hidden">
-                    <img src={song.al.picUrl + '?param=80y80'} alt="Cover" className="w-10 h-10 rounded-md object-cover border border-black/5 dark:border-white/10" />
+                  <div className={clsx("flex items-center gap-3 md:gap-4 overflow-hidden", isSelectMode ? "ml-0" : "ml-2 md:ml-0")}>
+                    <div className="w-10 h-10 md:w-10 md:h-10 rounded-md overflow-hidden flex-shrink-0 relative">
+                      <img src={song.al.picUrl + '?param=80y80'} alt="Cover" className="w-full h-full object-cover border border-black/5 dark:border-white/10" />
+                      {/* Mobile Playing Indicator Overlay */}
+                      {isCurrent && isPlaying && (
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center md:hidden">
+                          <div className="flex items-end gap-[2px] h-3 w-3">
+                            <motion.div className="w-[2px] bg-white rounded-full" animate={{ height: ["3px", "8px", "3px"] }} transition={{ repeat: Infinity, duration: 0.8 }} />
+                            <motion.div className="w-[2px] bg-white rounded-full" animate={{ height: ["6px", "12px", "6px"] }} transition={{ repeat: Infinity, duration: 1.2 }} />
+                            <motion.div className="w-[2px] bg-white rounded-full" animate={{ height: ["4px", "8px", "4px"] }} transition={{ repeat: Infinity, duration: 0.9 }} />
+                          </div>
+                        </div>
+                      )}
+                    </div>
                     <div className="flex flex-col overflow-hidden">
-                      <span className={clsx("truncate font-medium text-sm", isCurrent ? "text-[#0071e3]" : "text-[#1d1d1f] dark:text-[#f5f5f7]")}>
+                      <span className={clsx("truncate font-medium text-[13px] md:text-sm", isCurrent ? "text-[#0071e3]" : "text-[#1d1d1f] dark:text-[#f5f5f7]")}>
                         {song.name}
                       </span>
-                      <span className="truncate text-xs text-[#86868b]">
+                      <span className="truncate text-[11px] md:text-xs text-[#86868b]">
                         {song.ar.map((a: any) => a.name).join(', ')}
                       </span>
                     </div>
                   </div>
 
-                  <span className="truncate text-sm text-[#86868b] group-hover:text-[#1d1d1f] dark:group-hover:text-[#f5f5f7] transition-colors">
+                  <span className="hidden md:block truncate text-sm text-[#86868b] group-hover:text-[#1d1d1f] dark:group-hover:text-[#f5f5f7] transition-colors">
                     {song.al.name}
                   </span>
 
-                  <div className="w-28 text-right flex items-center justify-end gap-1 text-sm text-[#86868b] relative">
-                    <span className="group-hover:hidden block mr-2">
+                  <div className="w-16 md:w-28 text-right flex items-center justify-end gap-1 text-[11px] md:text-sm text-[#86868b] relative">
+                    <span className="group-hover:hidden block mr-0 md:mr-2">
                       {Math.floor(song.dt / 60000)}:{String(Math.floor((song.dt % 60000) / 1000)).padStart(2, '0')}
                     </span>
                     <button 
@@ -387,21 +399,21 @@ export default function SearchView() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-28 left-1/2 -translate-x-1/2 bg-[#1d1d1f] dark:bg-[#2c2c2e] text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-6 z-50"
+            className="fixed bottom-24 md:bottom-28 left-1/2 -translate-x-1/2 bg-[#1d1d1f] dark:bg-[#2c2c2e] text-white px-4 md:px-6 py-3 md:py-4 rounded-2xl shadow-2xl flex items-center gap-3 md:gap-6 z-50 max-w-[95vw] overflow-x-auto no-scrollbar"
           >
-            <span className="font-medium text-sm whitespace-nowrap">已选择 {selectedIds.size} 项</span>
-            <div className="w-px h-6 bg-white/20"></div>
-            <button onClick={handleBatchPlay} className="flex items-center gap-2 text-sm hover:text-[#0071e3] transition-colors whitespace-nowrap">
-              <Play className="w-4 h-4" /> 播放
+            <span className="font-medium text-[11px] md:text-sm whitespace-nowrap">已选择 {selectedIds.size} 项</span>
+            <div className="w-px h-4 md:h-6 bg-white/20"></div>
+            <button onClick={handleBatchPlay} className="flex items-center gap-1.5 md:gap-2 text-[11px] md:text-sm hover:text-[#0071e3] transition-colors whitespace-nowrap">
+              <Play className="w-3.5 h-3.5 md:w-4 md:h-4" /> 播放
             </button>
-            <button onClick={handleBatchAdd} className="flex items-center gap-2 text-sm hover:text-[#0071e3] transition-colors whitespace-nowrap">
-              <Plus className="w-4 h-4" /> 添加到列表
+            <button onClick={handleBatchAdd} className="flex items-center gap-1.5 md:gap-2 text-[11px] md:text-sm hover:text-[#0071e3] transition-colors whitespace-nowrap">
+              <Plus className="w-3.5 h-3.5 md:w-4 md:h-4" /> 添加
             </button>
-            <button onClick={handleBatchDownload} className="flex items-center gap-2 text-sm hover:text-[#0071e3] transition-colors whitespace-nowrap">
-              <Download className="w-4 h-4" /> 下载
+            <button onClick={handleBatchDownload} className="flex items-center gap-1.5 md:gap-2 text-[11px] md:text-sm hover:text-[#0071e3] transition-colors whitespace-nowrap">
+              <Download className="w-3.5 h-3.5 md:w-4 md:h-4" /> 下载
             </button>
-            <button onClick={() => { setSelectedIds(new Set()); setIsSelectMode(false); }} className="p-1 hover:bg-white/10 rounded-full transition-colors ml-2">
-              <X className="w-5 h-5" />
+            <button onClick={() => { setSelectedIds(new Set()); setIsSelectMode(false); }} className="p-1 hover:bg-white/10 rounded-full transition-colors ml-1 md:ml-2">
+              <X className="w-4 h-4 md:w-5 md:h-5" />
             </button>
           </motion.div>
         )}
