@@ -15,6 +15,8 @@ const cloudsearch = require('NeteaseCloudMusicApi/module/cloudsearch');
 const user_detail = require('NeteaseCloudMusicApi/module/user_detail');
 const playmode_intelligence_list = require('NeteaseCloudMusicApi/module/playmode_intelligence_list');
 const simi_song = require('NeteaseCloudMusicApi/module/simi_song');
+const like = require('NeteaseCloudMusicApi/module/like');
+const likelist = require('NeteaseCloudMusicApi/module/likelist');
 
 const request = require('NeteaseCloudMusicApi/util/request');
 const { cookieToJson } = require('NeteaseCloudMusicApi/util/index');
@@ -93,6 +95,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ rou
         break;
       case 'simi/song':
         result = await wrapRequest(simi_song)(apiParams);
+        break;
+      case 'like':
+        result = await wrapRequest(like)(apiParams);
+        break;
+      case 'likelist':
+        result = await wrapRequest(likelist)(apiParams);
         break;
       default:
         return NextResponse.json({ error: 'Route not found' }, { status: 404 });

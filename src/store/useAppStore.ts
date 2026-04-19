@@ -28,8 +28,11 @@ interface AppState {
   isInitialLoading: boolean;
   isMobileUserOpen: boolean;
   isMobilePlaylistOpen: boolean;
+  likedSongIds: number[];
   setCookie: (cookie: string) => void;
   setProfile: (profile: UserProfile) => void;
+  setLikedSongIds: (ids: number[]) => void;
+  toggleLikedSong: (id: number, isLiked: boolean) => void;
   setCurrentSong: (song: Song) => void;
   setPlaylist: (playlist: Song[]) => void;
   addToPlaylist: (song: Song) => void;
@@ -59,8 +62,19 @@ export const useAppStore = create<AppState>()(
       isInitialLoading: false,
       isMobileUserOpen: false,
       isMobilePlaylistOpen: false,
+      likedSongIds: [],
       setCookie: (cookie) => set({ cookie }),
       setProfile: (profile) => set({ profile }),
+      setLikedSongIds: (ids) => set({ likedSongIds: ids }),
+      toggleLikedSong: (id, isLiked) => set((state) => {
+        const newIds = new Set(state.likedSongIds);
+        if (isLiked) {
+          newIds.add(id);
+        } else {
+          newIds.delete(id);
+        }
+        return { likedSongIds: Array.from(newIds) };
+      }),
       setCurrentSong: (song) => set({ currentSong: song }),
       setPlaylist: (playlist) => set((state) => {
         if (state.playMode === 'shuffle') {
