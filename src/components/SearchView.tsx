@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 
 export default function SearchView() {
-  const { profile, cookie, searchQuery, currentSong, isPlaying, setIsPlaying, setCurrentSong, setPlaylist, addToPlaylist, addMultipleToPlaylist } = useAppStore();
+  const { profile, cookie, searchQuery, currentSong, isPlaying, setIsPlaying, setCurrentSong, setPlaylist, addToPlaylist, addMultipleToPlaylist, setCurrentPlaylistId } = useAppStore();
   const [songs, setSongs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [openDownloadId, setOpenDownloadId] = useState<number | null>(null);
@@ -49,6 +49,7 @@ export default function SearchView() {
     if (currentSong?.id === song.id) {
       setIsPlaying(!isPlaying);
     } else {
+      setCurrentPlaylistId(null);
       setCurrentSong(song);
       addToPlaylist(song);
       setIsPlaying(true);
@@ -57,6 +58,7 @@ export default function SearchView() {
 
   const handlePlayAll = () => {
     if (!songs.length) return;
+    setCurrentPlaylistId(null);
     setPlaylist(songs);
     setCurrentSong(songs[0]);
     setIsPlaying(true);
@@ -96,6 +98,7 @@ export default function SearchView() {
   const handleBatchPlay = () => {
     const selectedSongs = songs.filter(s => selectedIds.has(s.id));
     if (selectedSongs.length > 0) {
+      setCurrentPlaylistId(null);
       setPlaylist(selectedSongs);
       setCurrentSong(selectedSongs[0]);
       setIsPlaying(true);

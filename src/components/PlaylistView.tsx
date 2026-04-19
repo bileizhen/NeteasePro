@@ -8,9 +8,10 @@ import clsx from 'clsx';
 import confetti from 'canvas-confetti';
 
 export default function PlaylistView() {
-  const { profile, cookie, setCurrentSong, setPlaylist, addToPlaylist, addMultipleToPlaylist, currentSong, isPlaying, setIsPlaying, setIsInitialLoading, isInitialLoading } = useAppStore();
+  const { profile, cookie, setCurrentSong, setPlaylist, addToPlaylist, addMultipleToPlaylist, currentSong, isPlaying, setIsPlaying, setIsInitialLoading, isInitialLoading, setCurrentPlaylistId } = useAppStore();
   const [songs, setSongs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [playlistId, setPlaylistId] = useState<number | null>(null);
   const [openDownloadId, setOpenDownloadId] = useState<number | null>(null);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [showWelcome, setShowWelcome] = useState(false);
@@ -81,6 +82,7 @@ export default function PlaylistView() {
       const likePlaylistId = listRes.playlist?.[0]?.id;
 
       if (likePlaylistId) {
+        setPlaylistId(likePlaylistId);
         // 2. 获取"我喜欢的音乐"详情
         const detailRes = await fetch('/api/playlist/detail', {
           method: 'POST',
@@ -125,6 +127,7 @@ export default function PlaylistView() {
     if (currentSong?.id === song.id) {
       setIsPlaying(!isPlaying);
     } else {
+      setCurrentPlaylistId(playlistId);
       setCurrentSong(song);
       addToPlaylist(song);
       setIsPlaying(true);
@@ -133,6 +136,7 @@ export default function PlaylistView() {
 
   const handlePlayAll = () => {
     if (!songs.length) return;
+    setCurrentPlaylistId(playlistId);
     setPlaylist(songs);
     setCurrentSong(songs[0]);
     setIsPlaying(true);
@@ -171,6 +175,7 @@ export default function PlaylistView() {
   const handleBatchPlay = () => {
     const selectedSongs = songs.filter(s => selectedIds.has(s.id));
     if (selectedSongs.length > 0) {
+      setCurrentPlaylistId(playlistId);
       setPlaylist(selectedSongs);
       setCurrentSong(selectedSongs[0]);
       setIsPlaying(true);

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useAppStore } from '@/store/useAppStore';
-import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize2, Mic2, X, ChevronDown, Repeat, Shuffle, Repeat1, MonitorPlay } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize2, Mic2, X, ChevronDown, Repeat, Shuffle, Repeat1, MonitorPlay, HeartPulse } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 import PVMode from './PVMode';
@@ -22,7 +22,7 @@ type LyricLine = {
 };
 
 export default function Player() {
-  const { currentSong, playlist, isPlaying, setIsPlaying, setCurrentSong, cookie, playMode, setPlayMode } = useAppStore();
+  const { currentSong, playlist, isPlaying, setIsPlaying, setCurrentSong, cookie, playMode, setPlayMode, currentPlaylistId, addMultipleToPlaylist } = useAppStore();
   const audioRef = useRef<HTMLAudioElement>(null);
   const lyricsRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
@@ -504,10 +504,89 @@ export default function Player() {
   }, [playlist, currentSong, playMode, setCurrentSong, setIsPlaying]);
 
   const togglePlayMode = () => {
-    const modes: ('sequence' | 'loop' | 'shuffle')[] = ['sequence', 'loop', 'shuffle'];
+    const modes: ('sequence' | 'loop' | 'shuffle' | 'heartbeat')[] = ['sequence', 'loop', 'shuffle', 'heartbeat'];
     const nextIndex = (modes.indexOf(playMode) + 1) % modes.length;
-    setPlayMode(modes[nextIndex]);
+    const nextMode = modes[nextIndex];
+    setPlayMode(nextMode);
+    
+    if (nextMode === 'heartbeat') {
+      fetchHeartbeatList(true);
+    }
   };
+
+  const [isFetchingHeartbeat, setIsFetchingHeartbeat] = useState(false);
+
+  const fetchHeartbeatList = useCallback(async (replaceUpcoming = false) => {
+    if (!currentSong || !cookie || isFetchingHeartbeat) return;
+    
+    setIsFetchingHeartbeat(true);
+    try {
+      let newSongs: any[] = [];
+      if (currentPlaylistId) {
+        // 使用智能播放接口 (playmode/intelligence/list)
+        const res = await fetch('/api/playmode/intelligence/list', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: currentSong.id, pid: currentPlaylistId, sid: currentSong.id, count: 20, cookie }),
+        }).then(r => r.json());
+
+        if (res.data && Array.isArray(res.data)) {
+          newSongs = res.data.map((d: any) => d.songInfo);
+        }
+      } else {
+        // 降级使用相似歌曲接口
+        const res = await fetch('/api/simi/song', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: currentSong.id, cookie }),
+        }).then(r => r.json());
+
+        if (res.songs && Array.isArray(res.songs)) {
+          newSongs = res.songs.map((s: any) => ({
+            ...s,
+            ar: s.artists || s.ar,
+            al: s.album || s.al,
+          }));
+        }
+      }
+      
+      if (newSongs.length > 0) {
+        if (replaceUpcoming) {
+          useAppStore.setState((state) => {
+            const currentIndex = state.playlist.findIndex(s => s.id === currentSong.id);
+            if (currentIndex !== -1) {
+              const history = state.playlist.slice(0, currentIndex + 1);
+              // Filter out duplicates from newSongs
+              const existingIds = new Set(history.map(s => s.id));
+              const uniqueNewSongs = newSongs.filter(s => !existingIds.has(s.id));
+              return { 
+                playlist: [...history, ...uniqueNewSongs],
+                originalPlaylist: [...history, ...uniqueNewSongs]
+              };
+            }
+            return state;
+          });
+        } else {
+          addMultipleToPlaylist(newSongs);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch heartbeat list', error);
+    } finally {
+      setIsFetchingHeartbeat(false);
+    }
+  }, [currentSong, currentPlaylistId, cookie, addMultipleToPlaylist, isFetchingHeartbeat]);
+
+  // 当处于心动模式且即将播放完当前列表时，自动获取更多推荐
+  useEffect(() => {
+    if (playMode === 'heartbeat' && currentSong && playlist.length > 0) {
+      const currentIndex = playlist.findIndex(s => s.id === currentSong.id);
+      // 如果剩余不到 3 首歌，且没有正在获取，则去获取
+      if (currentIndex !== -1 && playlist.length - currentIndex <= 3 && !isFetchingHeartbeat) {
+        fetchHeartbeatList();
+      }
+    }
+  }, [currentSong, playlist, playMode, fetchHeartbeatList]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -719,11 +798,12 @@ export default function Player() {
                   "transition-colors hidden md:block",
                   playMode !== 'sequence' ? "text-white" : "text-[#86868b] hover:text-white"
                 )}
-                title={playMode === 'sequence' ? "列表循环" : playMode === 'loop' ? "单曲循环" : "随机播放"}
+                title={playMode === 'sequence' ? "列表循环" : playMode === 'loop' ? "单曲循环" : playMode === 'shuffle' ? "随机播放" : "心动模式"}
               >
                 {playMode === 'sequence' && <Repeat className="w-4 h-4" />}
                 {playMode === 'loop' && <Repeat1 className="w-4 h-4" />}
                 {playMode === 'shuffle' && <Shuffle className="w-4 h-4" />}
+                {playMode === 'heartbeat' && <HeartPulse className="w-4 h-4 text-[#ff2d55]" />}
               </button>
               
               <button onClick={handlePrev} className="text-[#86868b] hover:text-white transition-colors">

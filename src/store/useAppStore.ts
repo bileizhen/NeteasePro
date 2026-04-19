@@ -22,8 +22,9 @@ interface AppState {
   playlist: Song[];
   isPlaying: boolean;
   searchQuery: string;
-  playMode: 'sequence' | 'loop' | 'shuffle';
+  playMode: 'sequence' | 'loop' | 'shuffle' | 'heartbeat';
   originalPlaylist: Song[];
+  currentPlaylistId: number | null;
   isInitialLoading: boolean;
   isMobileUserOpen: boolean;
   isMobilePlaylistOpen: boolean;
@@ -35,7 +36,8 @@ interface AppState {
   addMultipleToPlaylist: (songs: Song[]) => void;
   setIsPlaying: (isPlaying: boolean) => void;
   setSearchQuery: (query: string) => void;
-  setPlayMode: (mode: 'sequence' | 'loop' | 'shuffle') => void;
+  setPlayMode: (mode: 'sequence' | 'loop' | 'shuffle' | 'heartbeat') => void;
+  setCurrentPlaylistId: (id: number | null) => void;
   setIsInitialLoading: (isLoading: boolean) => void;
   setIsMobileUserOpen: (open: boolean) => void;
   setIsMobilePlaylistOpen: (open: boolean) => void;
@@ -50,6 +52,7 @@ export const useAppStore = create<AppState>()(
       currentSong: null,
       playlist: [],
       originalPlaylist: [],
+      currentPlaylistId: null,
       isPlaying: false,
       searchQuery: '',
       playMode: 'sequence',
@@ -100,6 +103,7 @@ export const useAppStore = create<AppState>()(
       }),
       setIsPlaying: (isPlaying) => set({ isPlaying }),
       setSearchQuery: (query) => set({ searchQuery: query }),
+      setCurrentPlaylistId: (id) => set({ currentPlaylistId: id }),
       setPlayMode: (mode) => set((state) => {
         if (mode === 'shuffle' && state.playMode !== 'shuffle' && state.originalPlaylist.length > 0) {
            const shuffled = [...state.originalPlaylist].sort(() => 0.5 - Math.random());
@@ -129,7 +133,7 @@ export const useAppStore = create<AppState>()(
       setIsInitialLoading: (isLoading) => set({ isInitialLoading: isLoading }),
       setIsMobileUserOpen: (open) => set({ isMobileUserOpen: open }),
       setIsMobilePlaylistOpen: (open) => set({ isMobilePlaylistOpen: open }),
-      logout: () => set({ cookie: null, profile: null, currentSong: null, playlist: [], originalPlaylist: [], isPlaying: false, searchQuery: '', playMode: 'sequence', isInitialLoading: false, isMobileUserOpen: false, isMobilePlaylistOpen: false }),
+      logout: () => set({ cookie: null, profile: null, currentSong: null, playlist: [], originalPlaylist: [], currentPlaylistId: null, isPlaying: false, searchQuery: '', playMode: 'sequence', isInitialLoading: false, isMobileUserOpen: false, isMobilePlaylistOpen: false }),
     }),
     {
       name: 'netease-pro-storage',
