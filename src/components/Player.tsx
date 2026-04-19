@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useAppStore } from '@/store/useAppStore';
-import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize2, Mic2, X, ChevronDown, Repeat, Shuffle, Repeat1, MonitorPlay, HeartPulse } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize2, Mic2, X, ChevronDown, Repeat, Shuffle, Repeat1, MonitorPlay, HeartPulse, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 import PVMode from './PVMode';
@@ -22,7 +22,7 @@ type LyricLine = {
 };
 
 export default function Player() {
-  const { currentSong, playlist, isPlaying, setIsPlaying, setCurrentSong, cookie, playMode, setPlayMode, currentPlaylistId, addMultipleToPlaylist } = useAppStore();
+  const { currentSong, playlist, isPlaying, setIsPlaying, setCurrentSong, cookie, playMode, setPlayMode, currentPlaylistId, addMultipleToPlaylist, profile, likedSongIds, setLikedSongIds, toggleLikedSong } = useAppStore();
   const audioRef = useRef<HTMLAudioElement>(null);
   const lyricsRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
@@ -62,6 +62,55 @@ export default function Player() {
       };
     }
   }, [currentSong]);
+
+  // 获取用户喜欢的歌曲列表
+  useEffect(() => {
+    if (cookie && profile?.userId) {
+      fetch('/api/likelist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid: profile.userId, cookie }),
+      })
+      .then(r => r.json())
+      .then(res => {
+        if (res.ids) {
+          setLikedSongIds(res.ids);
+        }
+      })
+      .catch(err => console.error('Failed to fetch likelist', err));
+    }
+  }, [cookie, profile]);
+
+  const handleLike = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!cookie || !currentSong) {
+      alert('请先登录');
+      return;
+    }
+    
+    const isLiked = likedSongIds.includes(currentSong.id);
+    const newLikedState = !isLiked;
+    
+    // 乐观更新 UI
+    toggleLikedSong(currentSong.id, newLikedState);
+    
+    try {
+      const res = await fetch('/api/like', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: currentSong.id, like: newLikedState, cookie })
+      }).then(r => r.json());
+      
+      if (res.code !== 200) {
+        // 失败回退
+        toggleLikedSong(currentSong.id, isLiked);
+        alert(res.message || '操作失败，请重试');
+      }
+    } catch (error) {
+      console.error('Like action failed', error);
+      toggleLikedSong(currentSong.id, isLiked);
+    }
+  };
 
   const initAudioContext = () => {
     if (!audioRef.current) return;
@@ -779,15 +828,29 @@ export default function Player() {
                   // Add a brief highlight effect
                   el.classList.add('bg-black/10', 'dark:bg-white/20');
                   setTimeout(() => el.classList.remove('bg-black/10', 'dark:bg-white/20'), 1500);
+                } else {
+                  window.open(`https://music.163.com/#/song?id=${currentSong.id}`, '_blank');
                 }
               }}>
-                <span className="truncate font-semibold text-base text-white/95 leading-tight" title="点击定位到歌曲">
+                <span className="truncate font-semibold text-base text-white/95 leading-tight" title="点击定位到歌曲或在网易云中打开">
                   {currentSong.name}
                 </span>
                 <span className="truncate text-xs text-[#86868b] mt-0.5">
                   {currentSong.ar.map((a: any) => a.name).join('/')}
                 </span>
               </div>
+              <button 
+                onClick={handleLike} 
+                className="ml-1 md:ml-2 hover:scale-110 transition-transform p-1"
+                title={likedSongIds.includes(currentSong.id) ? "取消喜欢" : "喜欢"}
+              >
+                <Heart 
+                  className={clsx(
+                    "w-4 h-4 md:w-5 md:h-5", 
+                    likedSongIds.includes(currentSong.id) ? "text-[#ff2d55] fill-[#ff2d55]" : "text-[#86868b] hover:text-white"
+                  )} 
+                />
+              </button>
           </div>
 
           <div className="flex flex-col items-center gap-1.5 px-2 md:px-6 border-l border-white/5 md:border-r flex-1 md:min-w-[360px]">
