@@ -71,7 +71,7 @@ export const useAppStore = create<AppState>()(
           // 如果有正在播放的歌，确保它在洗牌后列表的第一位（后续逻辑在UI层截取前后）
           const currentSongId = state.currentSong?.id;
           if (currentSongId) {
-             const currentIndex = shuffled.findIndex(s => s.id === currentSongId);
+             const currentIndex = shuffled.findIndex(s => s?.id === currentSongId);
              if (currentIndex !== -1 && currentIndex !== 0) {
                  const song = shuffled.splice(currentIndex, 1)[0];
                  shuffled.unshift(song);
@@ -82,7 +82,7 @@ export const useAppStore = create<AppState>()(
         return { playlist, originalPlaylist: playlist };
       }),
       addToPlaylist: (song) => set((state) => {
-        if (!state.playlist.find(s => s.id === song.id)) {
+        if (!state.playlist.find(s => s?.id === song?.id)) {
           return { 
             playlist: [...state.playlist, song],
             originalPlaylist: [...state.originalPlaylist, song]
@@ -91,10 +91,11 @@ export const useAppStore = create<AppState>()(
         return state;
       }),
       addMultipleToPlaylist: (songs) => set((state) => {
-        const existingIds = new Set(state.playlist.map(s => s.id));
-        const toAdd = songs.filter(s => !existingIds.has(s.id));
+        const validSongs = songs.filter(Boolean);
+        const existingIds = new Set(state.playlist.filter(Boolean).map(s => s.id));
+        const toAdd = validSongs.filter(s => s?.id && !existingIds.has(s.id));
         if (toAdd.length > 0) {
-          return { 
+          return {
             playlist: [...state.playlist, ...toAdd],
             originalPlaylist: [...state.originalPlaylist, ...toAdd]
           };
@@ -106,18 +107,18 @@ export const useAppStore = create<AppState>()(
       setCurrentPlaylistId: (id) => set({ currentPlaylistId: id }),
       setPlayMode: (mode) => set((state) => {
         if (mode === 'shuffle' && state.playMode !== 'shuffle' && state.originalPlaylist.length > 0) {
-           const shuffled = [...state.originalPlaylist].sort(() => 0.5 - Math.random());
+           const shuffled = [...state.originalPlaylist].filter(Boolean).sort(() => 0.5 - Math.random());
            
            if (state.currentSong) {
               const currentId = state.currentSong.id;
-              const currentIndex = shuffled.findIndex(s => s.id === currentId);
+              const currentIndex = shuffled.findIndex(s => s?.id === currentId);
               
               if (currentIndex !== -1 && currentIndex !== 0) {
                   // 把当前正在播放的歌曲移动到随机队列的开头，避免立刻切歌
                   const song = shuffled.splice(currentIndex, 1)[0];
                   shuffled.unshift(song);
               } else if (currentIndex === -1) {
-                  const originalCurrent = state.originalPlaylist.find(s => s.id === currentId);
+                  const originalCurrent = state.originalPlaylist.find(s => s?.id === currentId);
                   if (originalCurrent) {
                       shuffled.unshift(originalCurrent);
                   }

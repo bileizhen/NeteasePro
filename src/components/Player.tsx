@@ -488,7 +488,7 @@ export default function Player() {
       return;
     }
 
-    const currentIndex = playlist.findIndex(s => s.id === currentSong.id);
+    const currentIndex = playlist.findIndex(s => s?.id === currentSong.id);
     const nextIndex = (currentIndex + 1) % playlist.length;
     setCurrentSong(playlist[nextIndex]);
     setIsPlaying(true);
@@ -497,7 +497,7 @@ export default function Player() {
   const handlePrev = useCallback(() => {
     if (!playlist.length || !currentSong) return;
 
-    const currentIndex = playlist.findIndex(s => s.id === currentSong.id);
+    const currentIndex = playlist.findIndex(s => s?.id === currentSong.id);
     const prevIndex = (currentIndex - 1 + playlist.length) % playlist.length;
     setCurrentSong(playlist[prevIndex]);
     setIsPlaying(true);
@@ -531,7 +531,7 @@ export default function Player() {
         }).then(r => r.json());
 
         if (res.data && Array.isArray(res.data)) {
-          newSongs = res.data.map((d: any) => d.songInfo);
+          newSongs = res.data.map((d: any) => d.songInfo).filter(Boolean);
         }
       } else {
         // 降级使用相似歌曲接口
@@ -546,19 +546,19 @@ export default function Player() {
             ...s,
             ar: s.artists || s.ar,
             al: s.album || s.al,
-          }));
+          })).filter(Boolean);
         }
       }
       
       if (newSongs.length > 0) {
         if (replaceUpcoming) {
           useAppStore.setState((state) => {
-            const currentIndex = state.playlist.findIndex(s => s.id === currentSong.id);
+            const currentIndex = state.playlist.findIndex(s => s?.id === currentSong.id);
             if (currentIndex !== -1) {
               const history = state.playlist.slice(0, currentIndex + 1);
               // Filter out duplicates from newSongs
-              const existingIds = new Set(history.map(s => s.id));
-              const uniqueNewSongs = newSongs.filter(s => !existingIds.has(s.id));
+              const existingIds = new Set(history.filter(Boolean).map(s => s.id));
+              const uniqueNewSongs = newSongs.filter(s => s && s.id && !existingIds.has(s.id));
               return { 
                 playlist: [...history, ...uniqueNewSongs],
                 originalPlaylist: [...history, ...uniqueNewSongs]
@@ -580,7 +580,7 @@ export default function Player() {
   // 当处于心动模式且即将播放完当前列表时，自动获取更多推荐
   useEffect(() => {
     if (playMode === 'heartbeat' && currentSong && playlist.length > 0) {
-      const currentIndex = playlist.findIndex(s => s.id === currentSong.id);
+      const currentIndex = playlist.findIndex(s => s?.id === currentSong.id);
       // 如果剩余不到 3 首歌，且没有正在获取，则去获取
       if (currentIndex !== -1 && playlist.length - currentIndex <= 3 && !isFetchingHeartbeat) {
         fetchHeartbeatList();
