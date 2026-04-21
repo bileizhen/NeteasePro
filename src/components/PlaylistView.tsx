@@ -233,12 +233,18 @@ export default function PlaylistView() {
         body: JSON.stringify({ id: song.id, level, cookie }),
       }).then(r => r.json());
       
-      const url = res.data?.[0]?.url;
+      let url = res.data?.[0]?.url;
       if (url) {
+        // Ensure HTTPS is used for fetching to prevent Mixed Content blocked by browser
+        url = url.replace(/^http:\/\//i, 'https://');
+        
         // 由于跨域限制，直接使用 a 标签 download 可能会直接在浏览器播放
         // 尝试通过 fetch 获取 blob 强制下载，如果失败则回退到新窗口打开
         fetch(url)
-          .then(response => response.blob())
+          .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.blob();
+          })
           .then(blob => {
             const objectUrl = URL.createObjectURL(blob);
             const a = document.createElement('a');
