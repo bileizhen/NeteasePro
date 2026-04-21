@@ -122,10 +122,16 @@ export default function SearchView() {
           body: JSON.stringify({ id: song.id, level: 'exhigh', cookie }),
         }).then(r => r.json());
         
-        const url = res.data?.[0]?.url;
+        let url = res.data?.[0]?.url;
         if (url) {
+          // Ensure HTTPS is used for fetching to prevent Mixed Content blocked by browser
+          url = url.replace(/^http:\/\//i, 'https://');
+          
           await fetch(url)
-            .then(response => response.blob())
+            .then(response => {
+              if (!response.ok) throw new Error('Network response was not ok');
+              return response.blob();
+            })
             .then(blob => {
               const objectUrl = URL.createObjectURL(blob);
               const a = document.createElement('a');
@@ -156,10 +162,16 @@ export default function SearchView() {
         body: JSON.stringify({ id: song.id, level, cookie }),
       }).then(r => r.json());
       
-      const url = res.data?.[0]?.url;
+      let url = res.data?.[0]?.url;
       if (url) {
+        // Ensure HTTPS is used for fetching to prevent Mixed Content blocked by browser
+        url = url.replace(/^http:\/\//i, 'https://');
+        
         fetch(url)
-          .then(response => response.blob())
+          .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.blob();
+          })
           .then(blob => {
             const objectUrl = URL.createObjectURL(blob);
             const a = document.createElement('a');
